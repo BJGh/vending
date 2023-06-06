@@ -1,0 +1,67 @@
+﻿@page
+@model dynamic
+@{
+    ViewBag.Title = "Автомат по продаже напитков";
+}
+<style type="text/css">
+
+</style>
+
+<script type="text/javascript" src="~/Scripts/js/user.js"></script>
+
+<h1>Автомат по продаже напитков</h1>
+<div class="row">
+
+    <div class="col-lg-4 col-md-5">
+
+        <h3>Панель управления</h3>
+        <div class="row row-margin">
+
+            @foreach (var item in Model.CoinModel)
+            {
+                if (item.IsBlocking)
+                {
+                    <button disabled="disabled" class="btn coin-button lightcoral-bg">@((int)item.Value) р.</button>
+                }
+                else
+                {
+                    <button class="btn coin-button btn-default" onclick="userManager.addCoin('@item.Id')">@((int)item.Value) р.</button>
+                }
+            }
+        </div>
+        <div class="row row-margin">
+            <button id="ButtonBuy" disabled="disabled" class="btn btn-default" onclick="userManager.buy()">Купить</button>
+            <button id="ButtonCancel" disabled="disabled" class="btn btn-default" onclick="userManager.cancel()">Отмена</button>
+            <button id="ButtonTakeMoney" disabled="disabled" class="btn btn-default" onclick="userManager.takeMoney()">Забрать сдачу</button>
+        </div>
+    </div>
+
+    <div class="col-lg-2 col-md-5">
+        <h3>Информация</h3>
+        <div class="row row-margin">
+            <p>Внесенная сумма:<span id="TotalSum" class="info-span">0</span> р.</p>
+            <p>Сдача:<span id="Change" class="info-span">0</span> р.</p>
+        </div>
+    </div>
+</div>
+
+<h3>Напитки</h3>
+<div class="row row-margin">
+    @foreach (var item in Model.Drinks)
+    {
+        <div id="DrinkInfo" class="drink-info">
+            <img id="img_@item.Id" class="img img-thumbnail @(item.Count > 0  ? "img-hover" : "img-empty")" src="@item.ImagePath" onclick="userManager.IsCanBuy('@item.Id')" alt="" />
+            <p class="costprice">@item.CostPrice р.</p>
+        </div>
+    }
+    <input type="hidden" id="DrinkId">
+</div>
+
+<script type="text/javascript">
+    var userManager = null;
+
+    $(document).ready(function () {
+        userManager = new UserManager();
+        userManager.init(@Model.Deposit, @Model.Change);
+    });
+</script>
